@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ukesoppgave Motorvognregister</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+
+
+
+    <script type="application/javascript">
+        function registrer() {
+            const motorvogn = {
+                personnummer: $("#personnummer").val(),
+                navn: $("#navn").val(),
+                adresse: $("#adresse").val(),
+                kjennetegn: $("#kjennetegn").val(),
+                bilmerke: $("#bilmerke").val(),
+                biltype: $("#biltype").val()
+            };
+            $.post("/lagre", motorvogn, function(){
+                hentAlle();
+            });
+                 $("#personnummer").val(""),
+                 $("#navn").val(""),
+                 $("#adresse").val(""),
+                 $("#kjennetegn").val(""),
+                 $("#bilmerke").val(""),
+                 $("#biltype").val("")
+        }
+        function hentAlle() {
+            $.get("/hentAlle", function(data){
+                formaterData(data);
+            });
+        }
+        function formaterData(motorvogner){
+            let ut = "<table><tr><th>Personnummer</th><th>Navn</th><th>Adresse</th><th>Kjennetegn</th><th>Bilmerke</th><th>Biltype</th></tr>";
+
+            for(const motorvogn of motorvogner){
+                ut += "<tr><td>"+motorvogn.personnummer+"</td><td>"+motorvogn.navn+"</td><td>"+motorvogn.adresse
+                      +"</td><td>"+motorvogn.kjennetegn+"</td><td>"+motorvogn.bilmerke+"</td><td>"+motorvogn.biltype
+                      + "</td></tr>";
+            }
+            ut += "</table>";
+            $("#utskrift").html(ut);
+        }
+        function slettAlle(){
+            $.get("/slettAlle",function () {
+                hentAlle();
+            })
+        }
+
+    </script>
+</head>
+<body>
+
+</style>
+<h1>Motorvognregister</h1>
+Eiers personnummer <input type="text" id="personnummer">
+Eiers navn <input type="text" id="navn">
+Eiers adresse <input type="text" id="adresse">
+<br>
+<br>
+Kjennetegn <input type="text" id="kjennetegn">
+Bilmerke <input type="text" id="bilmerke">
+Biltype <input type="text" id="biltype">
+<br> <br>
+<button onclick="registrer()">Registrer</button>
+<br> <br>
+Alle bilene:
+<div id="utskrift"></div>
+
+<br><br><br>
+
+<button onclick="slettAlle()">Slett alle</button>
+
+</style>
+</body>
+</html>
